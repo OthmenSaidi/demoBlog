@@ -1,0 +1,33 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+création d'un nouvel article
+
+{% endblock %}
+
+{% block body %}
+<h1 class="display-4 text-center my-5">création d'un nouvel article</h1>
+
+<form method="post" class="col-md-5 mx-auto">
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input type="text" class="form-control" id="title" name="title">
+    
+  </div>
+  <div class="form-group">
+    <label for="content">Contenu de l'article</label>
+    <textarea type="text" class="form-control" id="content" name="content" rows="15"></textarea>
+  </div>
+   <div class="form-group">
+    <label for="image">Photo de l'article</label>
+    <input type="text" class="form-control" id="image" name="image">
+    
+  </div>
+  
+  <button type="submit" class="btn btn-secondary mb-5">Enregistrer l'article</button>
+</form>
+
+
+{% endblock %}
+
+

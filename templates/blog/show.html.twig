@@ -6,28 +6,20 @@ Détail de l'article
 {% endblock %}
 
 {% block body %}
-<h1 class="display-4 text-center my-5">Détail de l'article 12</h1>
+<h1 class="display-4 text-center my-5"> {{articleTwig.title}}</h1>
 
 <div class="album py-5 bg-light">
 
     <div class="row">
         <div class="col-md-8 mx-auto">
           <div class="card mb-4 shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+           <img src="{{articleTwig.image|replace({'600/400': '1000/300'})}}" alt="{{articleTwig.title}}">
 
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-              This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-              This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-              This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-              This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-              This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                </div>
-                <small class="text-muted">9 mins</small>
+              <p class="card-text">{{articleTwig.content|striptags}}</p>
+              <div class="d-flex justify-content-between align-items-end">
+             
+                <small class="text-muted">Posté le {{articleTwig.createdAt|date("m/d/Y")}} à {{articleTwig.createdAt|date("H:i:s")}}</small>
               </div>
             </div>
           </div>
