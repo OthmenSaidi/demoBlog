@@ -1,4 +1,13 @@
-<h1>{{title}}</h1>
+{% extends "base.html.twig" %}
+{# on hérite de notre gabarit de base base.html.twig (header, nav, footer, liens css etc...) #}
+{# extends : commande Twig  #}
+
+{# block : commande Twig #}
+{# Le block 'body' fait appel au bloc 'body' définit dans base.html.twig qui permet d'intégrer le contenu du template donc le block 'body' de base.html.twig (entre la nav et le footer)  #}
+
+{% block body %}
+<div class="container">
+<h1 class="display-4 text-center my-5">{{title}}</h1>
 
 {# Twig est un langage de rendu, un moteur de template, qui permet de traiter et d'afficher les données transmit par le controller sur les différents template #}
 {# Twig est intégrer automatiquement au framework Symfony #}
@@ -6,6 +15,8 @@
 {# Dans les templates, nous n'avons plus aucune lignes de code de PHP #}
 {# {{  }} -> doubles accolades, ce que l'on appel l'interpolation #}
 {# {%  %} -> commande TWIG #}
+
+{# age : variable Twig qui est transmise par le controller, via la méthode home() -> render([]) #}
 
 {% if age > 18 %}
 <p>Tu es majeur !!</p>
@@ -15,4 +26,7 @@
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut consequat ornare eros lacinia varius. Nam pulvinar eu ipsum ac congue. Quisque ultrices pulvinar justo, at fermentum felis varius ut. Vestibulum at lacus et nunc lacinia fermentum. Duis vel purus dolor. Vivamus at tincidunt ligula. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris eget augue nec metus mattis interdum a in nisi. Praesent tempor magna sapien, ac viverra ligula congue a. Maecenas ut dui vitae nibh dictum molestie id ac metus.
 
+
 Ut finibus eu neque eget efficitur. Curabitur tristique turpis quam, non consectetur erat gravida vitae. Nunc commodo augue eget erat aliquet semper. Aliquam consectetur ullamcorper dapibus. Sed rutrum, ex nec sodales porta, erat arcu sollicitudin nunc, eu vulputate dui diam et sapien. Suspendisse in ante quis ipsum dapibus eleifend. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam malesuada elit felis, nec tempor nisl iaculis in. Suspendisse ante purus, euismod ac erat vitae, viverra tempus diam. Proin convallis lobortis neque, et tempor quam tincidunt at. Nullam finibus sapien erat, quis tempor enim finibus vulputate. Aenean eget tristique lacus. Phasellus in tellus vel enim pulvinar fermentum sed eget est. Sed justo arcu, tincidunt et nisi ac, auctor egestas lacus.
+</div>
+{% endblock %}
