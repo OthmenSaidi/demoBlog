@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Form\ArticleFormType;
+use Doctrine\ORM\EntityManager;
 use App\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BlogController extends AbstractController
@@ -14,7 +18,7 @@ class BlogController extends AbstractController
     /**
      * @route("/", name="home")
      */
-   
+
     public function home(): Response
     {
         return $this->render('blog/home.html.twig', [
@@ -22,7 +26,7 @@ class BlogController extends AbstractController
             'age' => 25
         ]);
     }
-     /** Méthode permetrtant d'afficher toute  la liste des articles stockeés en BDD
+    /** Méthode permetrtant d'afficher toute  la liste des articles stockeés en BDD
      * @Route("/blog", name="blog")
      */
     public function index(ArticleRepository $repo): Response
@@ -50,28 +54,114 @@ class BlogController extends AbstractController
 
         ]);
     }
-       /**
+    /**
      * méthode permettant d'inserer et de modifier uun article
+     * Il est possible de définir plusieurs route qui execute le même méthode dans le controller
+     * {id} --> 5
      * @route("/blog/new", name="blog_create")
+     * @route("/blog/{id}/edit", name="blog_edit")
+     * 
      */
 
-    public function create(Request $request): Response
+    public function create(Article $articleCreate = null, Request $request, EntityManagerInterface $manager): Response
     {
+        //****************modifier les article ******** */
+        // Ici nous renseignons le setter de l'objet et Symfony est capable automatiquement d'envoyer les valeurs de l'entité directement dans les attributs 'value' du formulaire, étant donné que l'entité $articleCreate est relié au formulaire
+        //$articleCreate = new Article;
+        // ->setContent("contenu edité")
+
+
+        if (!$articleCreate) {
+            $articleCreate = new Article;
+        }
+
         // la classe Request de Symfony permet de véhiculer les données des superglobales PHP ($_POST, $_FILES, $_COOKIE, $_SESSION)
         // $request est un objet issu de la classe Request injecté en dependance de la méthode create()
 
-        dump($request);
-        return $this->render('blog/create.html.twig');
+        // dump($request);
+        //****************premiere méthode de génerer les formulaire ******** */
+        // $request permet de stocker les données des superglobales, la propriété $request->request permet de stocker les données véhiculées par un formulaire ($_POST), ici on compte si il y a données qui ont été saisie dans la formulaire
+
+        // if($request->request->count()>0) {
+        //     // Pour insérer dans la table Article, nous devons instancier un objet issu de la classe entité Article, qui est lié à la table SQL Article
+        //     // On rensigne tout les setteurs de l'objet avec en arguments les données du formulaire ($_POST)
+
+        //     $articleCreate = new Article;
+        //     $articleCreate->setTitle($request->request->get('title'))
+        //                   ->setContent($request->request->get('content'))
+        //                   ->setImage($request->request->get('image'))
+        //                   ->setCreatedAt(new \DateTime);
+        // dump($articleCreate);
+        // // on observe que l'objet entité Article $articleCreate, les propriétés contiennent bien les données du formaulaire
+
+
+        // $manager->persist($articleCreate);
+        // $manager->flush();
+        // // On fait appel au manager afin de pouvoir executer une insertion en BDD
+        // // on prépare et garde en mémoire l'insertion
+        // // on execute l'insertion
+        // return $this->redirectToRoute('blog_show', [
+        //     'id' => $articleCreate->getId()
+        // ]);
+        // // Après l'insertion, on redirige l'internaute vers le détail de l'article qui vient d'être inséré en BDD
+        // // Cela correspond à la route 'blog_show', mais c'est une route paramétrée qui attend un ID dans l'URL
+        // // En 2ème argument de redirectToRoute, nous transmettons l'ID de l'article qui vient d'être inséré en BDD
+
+
+
+        // }
+
+        //****************une autre méthode de génerer les formulaire ******** */
+
+        //$articleCreate = new Article;
+        // $form= $this->createFormBuilder($articleCreate)
+        //            ->add('title')
+        //            ->add('content')
+        //            ->add('image')
+        //            ->getForm();//permet de valider le formulaire
+        //   
+
+        //handleRequest() permet de récuperer chaque données saisies dans le form($request) les bindées et les transmettre directement dans les bon setteurs de mon entité $articleCreate"
+        //*********************une autre méthode de génerer les formulaire ******** */
+
+        //directement vvia la commande php bin/console make:form
+
+        // Nous avons créer une classe qui permet de générer le formulaire d'ajout d'article, il faut dans le controller importer cette classe ArticleFormType et relier le formulaire à notre entité Article $articleCreate
+
+        $form = $this->createForm(ArticleFormType::class, $articleCreate);
+        $form->handleRequest($request);
+        dump($articleCreate);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            //on appelle le setteur de la date puisqu'il y a pas de champs date dans le formulaire
+            
+            if(!$articleCreate->getId())
+            {
+                $articleCreate->setCreatedAt(new \DateTime);
+            }
+          
+            $manager->persist($articleCreate);
+            $manager->flush();
+
+            return $this->redirectToRoute('blog_show', [
+                'id' => $articleCreate->getId()
+            ]);
+        }
+
+        return $this->render('blog/create.html.twig', [
+            'formArticle' => $form->createView(),
+            'editMode' => $articleCreate->getId()
+        ]);
     }
 
-     /** Méthode permetrtant d'afficher le detail d'un article 
-      * on définit ici une route paramétrée définit avec un ID d'un article dans url
+    /** Méthode permetrtant d'afficher le detail d'un article 
+     * on définit ici une route paramétrée définit avec un ID d'un article dans url
      * /blog/9 --> {id} --> $id = 9
      * @Route("/blog/{id}", name="blog_show")
      */
     public function show(Article $article): Response
     {
-       // $repoArticle est un objet issu de la classe ArticleRepository
+        // $repoArticle est un objet issu de la classe ArticleRepository
         // La méthode find() permet de selectionner en BDD un article par son ID
 
 
@@ -81,15 +171,13 @@ class BlogController extends AbstractController
 
         //$article = $repoArticle->find($id);
         //dump($article);
-        
+
         return $this->render('blog/show.html.twig', [
             'articleTwig' => $article //on enovie sur le template les données selectionnées en BDD c'est à dire les informations d'une article en fonction de l'id transmit dans 'lURL
-            ]);
-            /*
+        ]);
+        /*
         En fonction de la route paramétrée {id} et de l'injection de dépendance $article, Symfony voit que l'on besoin d'un article de la BDD par rapport à l'ID transmit dans l'URL, il est donc capable de recupérer l'ID et de selectionner en BDD l'article correspondant et de l'envoyer directement en argument de la méthode show(Article $article)
         Tout ça grace à des ParamConverter qui appel des convertisseurs pour convertir les paramètres de l'objet. Ces objets sont stockés en tant qu'attribut de requete et peuvent donc être injectés an tant qu'argument de méthode de controller
     */
-
     }
- 
 }
