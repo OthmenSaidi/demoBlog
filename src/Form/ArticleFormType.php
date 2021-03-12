@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Article;
+use App\Entity\Categorie;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ArticleFormType extends AbstractType
@@ -13,6 +15,10 @@ class ArticleFormType extends AbstractType
     {
         $builder
             ->add('title')
+            ->add('categorie', EntityType::class,[
+                'class' => Categorie::class,
+                'choice_label' => 'title'
+            ])
             ->add('content')
             ->add('image')
             //->add('createdAt') nous n'avons pas de champ date dans le form

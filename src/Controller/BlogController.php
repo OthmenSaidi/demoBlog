@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Form\ArticleFormType;
+use App\Form\CommentFormType;
 use Doctrine\ORM\EntityManager;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -159,7 +161,7 @@ class BlogController extends AbstractController
      * /blog/9 --> {id} --> $id = 9
      * @Route("/blog/{id}", name="blog_show")
      */
-    public function show(Article $article): Response
+    public function show(Article $article, Request $request,  EntityManagerInterface $manager): Response
     {
         // $repoArticle est un objet issu de la classe ArticleRepository
         // La méthode find() permet de selectionner en BDD un article par son ID
@@ -171,10 +173,31 @@ class BlogController extends AbstractController
 
         //$article = $repoArticle->find($id);
         //dump($article);
+        $comment = new Comment;
+        $form = $this->createForm(CommentFormType::class, $comment);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+          
+            $comment->setCreatedAt(new \DateTime)
+                    ->setArticle($article);
+            $manager->persist($comment);
+            $manager->flush();
+            // message de validation en session grace à la méthode addFlash()
+            //1. success :identifiant du message
+            //2. le message
+            $this->addFlash('success', "le commentaire a bien été posté ! ");
+
+            return $this->redirectToRoute('blog_show', [
+                'id' => $article->getId()
+            ]);
+
+        } 
+      
 
         return $this->render('blog/show.html.twig', [
-            'articleTwig' => $article //on enovie sur le template les données selectionnées en BDD c'est à dire les informations d'une article en fonction de l'id transmit dans 'lURL
-        ]);
+            'articleTwig' => $article, //on enovie sur le template les données selectionnées en BDD c'est à dire les informations d'une article en fonction de l'id transmit dans 'lURL
+            'formComment' => $form->createView()
+            ]);
         /*
         En fonction de la route paramétrée {id} et de l'injection de dépendance $article, Symfony voit que l'on besoin d'un article de la BDD par rapport à l'ID transmit dans l'URL, il est donc capable de recupérer l'ID et de selectionner en BDD l'article correspondant et de l'envoyer directement en argument de la méthode show(Article $article)
         Tout ça grace à des ParamConverter qui appel des convertisseurs pour convertir les paramètres de l'objet. Ces objets sont stockés en tant qu'attribut de requete et peuvent donc être injectés an tant qu'argument de méthode de controller
