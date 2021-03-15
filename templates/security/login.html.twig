@@ -1,0 +1,32 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	Créer Votre Compte
+{% endblock %}
+{% block body %}
+	<h1 class="display-4 text-center my-5">Identifiez-compte...</h1>
+
+	{% for message in app.flashes('success') %}
+
+		<div class="col-md-3 bg-success p-4 rounded mx-auto text-center text-white mb-3">{{message}}</div>
+
+	{% endfor %}
+
+	<form method="post" class="col-md-5 mx-auto" action="{{ path('security_login') }}">
+		<div class="form-group">
+			<label for="_username">Email</label>
+			<input type="email" class="form-control" id="_username" name="_username">
+
+		</div>
+
+		<div class="form-group">
+			<label for="_password">Password</label>
+			<input type="password" class="form-control" id="_password" name="_password">
+
+		</div>
+
+		<button type="submit" class="btn btn-secondary mb-5">Continuez...</button>
+	</form>
+
+
+{% endblock %}
