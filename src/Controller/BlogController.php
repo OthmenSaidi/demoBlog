@@ -136,12 +136,11 @@ class BlogController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             //on appelle le setteur de la date puisqu'il y a pas de champs date dans le formulaire
-            
-            if(!$articleCreate->getId())
-            {
+
+            if (!$articleCreate->getId()) {
                 $articleCreate->setCreatedAt(new \DateTime);
             }
-          
+
             $manager->persist($articleCreate);
             $manager->flush();
 
@@ -176,10 +175,10 @@ class BlogController extends AbstractController
         $comment = new Comment;
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()){
-          
+        if ($form->isSubmitted() && $form->isValid()) {
+
             $comment->setCreatedAt(new \DateTime)
-                    ->setArticle($article);
+                ->setArticle($article);
             $manager->persist($comment);
             $manager->flush();
             // message de validation en session grace à la méthode addFlash()
@@ -190,14 +189,13 @@ class BlogController extends AbstractController
             return $this->redirectToRoute('blog_show', [
                 'id' => $article->getId()
             ]);
+        }
 
-        } 
-      
 
         return $this->render('blog/show.html.twig', [
-            'articleTwig' => $article, //on enovie sur le template les données selectionnées en BDD c'est à dire les informations d'une article en fonction de l'id transmit dans 'lURL
+            'articleTwig' => $article, //on envoie sur le template les données selectionnées en BDD c'est à dire les informations d'une article en fonction de l'id transmit dans 'lURL
             'formComment' => $form->createView()
-            ]);
+        ]);
         /*
         En fonction de la route paramétrée {id} et de l'injection de dépendance $article, Symfony voit que l'on besoin d'un article de la BDD par rapport à l'ID transmit dans l'URL, il est donc capable de recupérer l'ID et de selectionner en BDD l'article correspondant et de l'envoyer directement en argument de la méthode show(Article $article)
         Tout ça grace à des ParamConverter qui appel des convertisseurs pour convertir les paramètres de l'objet. Ces objets sont stockés en tant qu'attribut de requete et peuvent donc être injectés an tant qu'argument de méthode de controller

@@ -1,38 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Listes des articles{% endblock %}
+{% block title %}Listes des articles
+{% endblock %}
 
 {% block body %}
-<h1 class="display-4 text-center my-5">{{title}}</h1>
+	<h1 class="display-4 text-center my-5">{{title}}</h1>
 
-<div class="album py-5 bg-light">
-      <div class="row">
-      {% for data in articles %}
-        <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
-            <img src="{{data.image}}" alt="">
-            <div class="card-body">
-            <h4 class="text-center">{{data.title}}</h4>
-              <p class="card-text">{{data.content|striptags|slice(0,250)}}</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <a href="{{ path('blog_show', {'id': data.id}) }}" class="btn btn-sm btn-outline-secondary">Lirer la suite</a>
-                  <a href="{{ path('blog_edit', {'id': data.id}) }}"  class="btn btn-sm btn-outline-secondary">Modifier</a>
-                </div>
-                {# La bdd renvoi un objet issue de la classe DateTime, on ne peut la convertir en une chaine de caractère #}
-                {# On utilise donc un filtre Twig : date() #}
-              {#  Nous avons une relation entre la table Article et la table Category
-                                    Grace aux relations bi-directionnelle, en selectionnant dans la table Article, nous avons automatiquement accès à toute les correspondance dans les autres tables
-                                    Ici si nous selectionnons les articles, nous avons automatiquement accès à la catégorie associée à l'article ainsi que tout les commentaires liés à l'article #}
+	<div class="album py-5 bg-light">
+		<div class="row">
+			{% for data in articles %}
+				<div class="col-md-4">
+					<div class="card mb-4 shadow-sm">
+						<img src="{{data.image}}" alt="">
+						<div class="card-body">
+							<h4 class="text-center">{{data.title}}</h4>
+							<p class="card-text">{{data.content|striptags|slice(0,250)}}</p>
+							<div class="d-flex justify-content-between align-items-center">
+								<div class="btn-group">
+									<a href="{{ path('blog_show', {'id': data.id}) }}" class="btn btn-sm btn-outline-secondary">Lirer la suite</a>
+									<a href="{{ path('blog_edit', {'id': data.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+								</div>
+								{# La bdd renvoi un objet issue de la classe DateTime, on ne peut la convertir en une chaine de caractère #}
+								{# On utilise donc un filtre Twig : date() #}
+								{#  Nous avons une relation entre la table Article et la table Category
+								                                    Grace aux relations bi-directionnelle, en selectionnant dans la table Article, nous avons automatiquement accès à toute les correspondance dans les autres tables
+								                                    Ici si nous selectionnons les articles, nous avons automatiquement accès à la catégorie associée à l'article ainsi que tout les commentaires liés à l'article #}<small class="text-muted p-2"> Posté le
+									{{data.createdAt|date("m/d/Y")}}
+									à
+									{{data.createdAt|date("H:i:s")}}
+									dans la catégorie
+									<strong>{{data.categorie.title}}</strong>
+								</small>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
 
-                <small class="text-muted p-2">Posté le {{data.createdAt|date("m/d/Y")}} à {{data.createdAt|date("H:i:s")}} dans la catégorie <strong>{{data.categorie.title}}</strong></small>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-     
-</div>
+	</div>
 
 {% endblock %}

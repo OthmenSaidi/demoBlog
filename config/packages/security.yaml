@@ -1,7 +1,17 @@
 security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         users_in_memory: { memory: null }
+        # les providers permettant de préciser à symfony ou sont stockées les données à controler c'est à dire les données de l'utlisateur stockées en BDD et quelle propriété il va devoir controler
+        in_database:
+            entity:
+                class: App\Entity\User
+                property: email
+
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -9,7 +19,19 @@ security:
         main:
             anonymous: true
             lazy: true
-            provider: users_in_memory
+            provider: in_database
+            # firwalls (barrieres de feu), quel partie nous allons protéger et par quel moyen on précise à symfony que nous allons protéger le contenu principal du site parrapport au provider
+            # in_database , c'est dire avec les odnnées des utlisateurs stockés en BDD
+            
+            #on précise a symfony que la connex s'établit sous forme de formualire de connex
+            form_login: 
+                login_path: security_login # la route sur laquelle est déclaré le form
+                check_path: security_login # sur quelle route il doit comparer les données en BDD avec les données saisie dans le form
+            # poiur se deconnecter symfony a besoin de la route il se deconnecte automatiquemenyt
+            logout:
+                path: security_logout
+                target: blog
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
