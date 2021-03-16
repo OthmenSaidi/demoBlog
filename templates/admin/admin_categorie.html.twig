@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	BACKOFFICE | categorie
+{% endblock %}
+
+{% block body %}
+	<h1 class="display-4 text-center my-5">affichage des catégories
+	</h1>
+
+	<table class="table table-bordered text-center">
+		<tr>
+			{% for colonne in colonnes %}
+				<th>{{ colonne|upper }}</th>
+
+			{% endfor %}
+		</tr>
+		{% for categorie in categoriesBdd %}
+			<tr>
+				<td>{{categorie.id}}</td>
+				<td>{{categorie.description}}</td>
+				<td>{{categorie.title}}</td>
+			</tr>
+		{% endfor %}
+
+	</table>
+
+{% endblock %}
