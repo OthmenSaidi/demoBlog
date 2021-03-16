@@ -12,10 +12,21 @@
 
 	{% endfor %}
 
+
+	{% if error %}
+
+		<div class="col-md-3 bg-danger p-4 rounded mx-auto text-center text-white mb-3">
+			{{ error.messageKey|trans(error.messageData, 'security') }}
+			{# trans(error.messageData, 'security') : permet de pointer sur le fichier 'translations/security.en.php'(il faut le créer manullement) qui contient la personnalisation des messages utilisateurs par défaut de Symfony #}
+
+		</div>
+	{% endif %}
+
+
 	<form method="post" class="col-md-5 mx-auto" action="{{ path('security_login') }}">
 		<div class="form-group">
 			<label for="_username">Email</label>
-			<input type="email" class="form-control" id="_username" name="_username">
+			<input type="email" class="form-control" id="_username" name="_username" value="{{lastUsername}}">
 
 		</div>
 

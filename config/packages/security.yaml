@@ -42,5 +42,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # on présise à sympfone que seulement les role_admin stockés en BDD auront accés à la route/admin
+            - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        # si on tente d'accéder au backoffice alors qu'on est pas admin on rederige automatiquement vers  affichage des articles
+    access_denied_url: /blog
