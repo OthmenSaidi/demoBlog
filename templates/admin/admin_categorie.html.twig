@@ -1,12 +1,22 @@
 {% extends "base.html.twig" %}
 
 {% block title %}
-	BACKOFFICE | categorie
+	BACKOFFICE | gestion des catégories
 {% endblock %}
 
 {% block body %}
-	<h1 class="display-4 text-center my-5">affichage des catégories
+	<h1 class="display-4 text-center my-5 ">Gestion des catégories
 	</h1>
+	<a href="{{path('admin_new_categorie')}}" class="col-md-2 mx-auto btn btn-primary">
+		Nouvelle catégorie</a>
+
+	{% for label, messages in app.flashes(['danger','success']) %}
+		{% for message in messages %}
+
+			<div class="col-md-3 bg-{{label}} p-4 rounded mx-auto text-center text-white mb-3">{{message}}</div>
+		{% endfor %}
+	{% endfor %}
+
 
 	<table class="table table-bordered text-center">
 		<tr>
@@ -14,12 +24,20 @@
 				<th>{{ colonne|upper }}</th>
 
 			{% endfor %}
+			<th>NB ARTICLES</th>
 		</tr>
 		{% for categorie in categoriesBdd %}
 			<tr>
+
 				<td>{{categorie.id}}</td>
 				<td>{{categorie.description}}</td>
 				<td>{{categorie.title}}</td>
+				<td>{{categorie.articles|length}}</td>
+				<td>
+					<a href="{{path('admin_remove_categorie', {'id': categorie.id})}}" class="btn btn-danger" onclick="return(confirm('voulez-vous vraiment supprimer cette catégorie ?'))">
+						<i class="fas fa-trash-alt"></i>
+					</a>
+				</td>
 			</tr>
 		{% endfor %}
 

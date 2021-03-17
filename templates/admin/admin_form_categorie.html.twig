@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	BACKOFFICE AJOUT CATEGORIE
+
+{% endblock %}
+
+{% block body %}
+	<h1 class="display-4 text-center my-5">Ajouter une catégorie
+	</h1>
+
+
+	{{ form_start(formCategorie, {'attr': {'class': 'col-md-5 mx-auto'}}) }}
+
+	{{ form_row(formCategorie.title, {'label': "Titre de la catégorie"}) }}
+	{{ form_row(formCategorie.description, {'attr': {'rows':15}}) }}
+
+
+	<button class="btn btn-secondary mb-5">Enregistrer la catégorie</button>
+
+
+	{{ form_end(formCategorie) }}
+{% endblock %}
