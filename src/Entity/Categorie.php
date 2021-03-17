@@ -5,7 +5,9 @@ namespace App\Entity;
 use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\BrowserKit\Response;
 
 /**
  * @ORM\Entity(repositoryClass=CategorieRepository::class)
@@ -21,11 +23,18 @@ class Categorie
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(
+     *      message = "Merci de saisir la description de la catégorie"
+     * )
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *@Assert\NotBlank(
+     *      message = "Merci de saisir le Titre de la catégorie",
+     *      groups={"categorie"}
+     * )
      */
     private $title;
 

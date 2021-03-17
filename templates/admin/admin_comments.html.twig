@@ -1,0 +1,55 @@
+{% extends "base.html.twig" %}
+{% block titre %}
+	BACKOFFICE| Gesion des commentaires
+{% endblock %}
+
+{% block body %}
+	<h1 class="display-4 text-center my-5">Gestion des commentaires
+	</h1>
+	{% for label, messages in app.flashes(['danger','success']) %}
+		{% for message in messages %}
+
+			<div class="col-md-3 bg-{{label}} p-4 rounded mx-auto text-center text-white mb-3">{{message}}</div>
+		{% endfor %}
+	{% endfor %}
+
+	<table class="table table-bordered text-center">
+		<tr>
+
+			{% for colonne in colonnes %}
+				{% if colonne == 'createdAt' %}
+					<th>DATE</th>
+
+				{% else %}
+					<th>{{colonne|upper}}</th>
+				{% endif %}
+			{% endfor %}
+
+			<th>TITRE DE L'ARTICLE</th>
+		</tr>
+
+		{% for comment in comments %}
+			<tr>
+				<th>{{comment.id}}</th>
+				<th>{{comment.author}}</th>
+				<th>{{comment.content|raw}}</th>
+				<th>{{comment.createdAt|date('Y/m/d')}}</th>
+				<th>{{comment.article.title}}</th>
+				<th>
+					<a href="" class="btn btn-success">
+						<i class="fas fa-edit"></i>
+					</a>
+				</th>
+				<th>
+					<a href="{{path('admin_remove_comment', {'id': comment.id})}}" class="btn btn-danger" onclick="return(confirm('voulez-vous vraiment supprimer ce commentaire ?'))">
+						<i class="fas fa-trash-alt"></i>
+					</a>
+				</th>
+
+
+			</tr>
+
+
+		{% endfor %}
+	</tr>
+</table>{% endblock %}
