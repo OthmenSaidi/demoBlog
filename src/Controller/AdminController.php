@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Categorie;
+use App\Form\AdminRegistrationFormType;
 use App\Form\ArticleFormType;
 use App\Form\CategorieFormType;
 use Doctrine\ORM\EntityManager;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\CommentRepository;
@@ -147,16 +150,25 @@ class AdminController extends AbstractController
         if (!$categorie) {
             $categorie = new Categorie;
         }
-        $formCategorie = $this->createForm(CategorieFormType::class, $categorie);
+        $formCategorie = $this->createForm(CategorieFormType::class, $categorie, [
+
+            'validation_groups' => ['categorie']
+        ]);
         $formCategorie->handleRequest($request);
 
         //dump($request);
 
         if ($formCategorie->isSubmitted() && $formCategorie->isValid()) {
+            if (!$categorie->getId())
+                $message = "la catégorie " . $categorie->getTitle() . " a été enregistrée avec succès !";
+            else
+                $message = "la catégorie " . $categorie->getTitle() . " a été modifié avec succès !";
+
+
 
             $manager->persist($categorie);
             $manager->flush();
-            $this->addFlash('success', "Le catégorie " . $categorie->getId() . " a bien été ajoute");
+            $this->addFlash('success', $message);
             return $this->redirectToRoute('admin_categorie');
         }
 
@@ -213,5 +225,55 @@ class AdminController extends AbstractController
     public function editComment(): Response
     {
         return $this->render('admin/admin_edit_comments.html.twig');
+    }
+
+    /**
+     * @Route("admin/users", name="admin_users")
+     * @Route("admin/user/{id}/remove", name="admin_remove_user")
+     * 
+     */
+
+    public function adminUsers(EntityManagerInterface $manager, UserRepository $repoUser, User $user = null): Response
+    {
+        $colonnes = $manager->getClassMetadata(User::class)->getFieldNames();
+
+        $usersBdd = $repoUser->findAll();
+        if ($user) {
+            $manager->remove($user);
+            $manager->flush();
+            $this->addFlash('success', "l'utilisateur a été supprimé avec succès !");
+            return $this->redirectToRoute('admin_users');
+        }
+
+
+        return $this->render('admin/admin_users.html.twig', [
+
+            'colonnes' => $colonnes,
+            'usersBdd' => $usersBdd
+        ]);
+    }
+    /**
+     * @Route("admin/user/{id}/edit", name="admin_edit_user")
+     */
+    public function adminUserEdit(User $user, EntityManagerInterface $manager, Request $request): Response
+    {
+        $formUser = $this->createForm(AdminRegistrationFormType::class, $user);
+
+        $formUser->handleRequest($request);
+        dump($user);
+
+        if ($formUser->isSubmitted() && $formUser->isValid()) {
+            $id = $user->getId();
+            $userName = $user->getUsername();
+            $manager->persist($user);
+            $manager->flush();
+            $this->addFlash('success', "L'utlisateur $userName iD$id a été modifié avec succès !");
+            return $this->redirectToRoute('admin_users');
+        }
+
+        return $this->render('admin/admin_edit_user.html.twig', [
+
+            'formUser' => $formUser->createView()
+        ]);
     }
 }

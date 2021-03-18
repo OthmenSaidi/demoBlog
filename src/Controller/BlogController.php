@@ -12,8 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BlogController extends AbstractController
 {
@@ -65,7 +68,7 @@ class BlogController extends AbstractController
      * 
      */
 
-    public function create(Article $articleCreate = null, Request $request, EntityManagerInterface $manager): Response
+    public function create(Article $articleCreate = null, Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): Response
     {
         //****************modifier les article ******** */
         // Ici nous renseignons le setter de l'objet et Symfony est capable automatiquement d'envoyer les valeurs de l'entité directement dans les attributs 'value' du formulaire, étant donné que l'entité $articleCreate est relié au formulaire
@@ -135,6 +138,29 @@ class BlogController extends AbstractController
         dump($articleCreate);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $imageFile */
+            $imageFile = $form->get('image')->getData(); // permet rde recuperer les données de l'impage uploadé
+            dump($imageFile);
+
+            if ($imageFile) {
+                $originialFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+
+                dump($originialFilename);
+                $safeFilename = $slugger->slug($originialFilename);
+                dump($safeFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                try // on tente de copier l'image dans le bon dossier sur le serveur
+                {
+                    $imageFile->move(
+                        $this->getParameter('image_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                }
+                // on envoie l'image définitive dans le bon setteur de l'object afin qu elimage soit stockée en bdd
+                $articleCreate->setImage($newFilename);
+            }
+
             //on appelle le setteur de la date puisqu'il y a pas de champs date dans le formulaire
 
             if (!$articleCreate->getId()) {

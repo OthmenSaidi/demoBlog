@@ -53,19 +53,26 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\EqualTo( propertyPath = "confirm_password", message = "Les mots de passes ne correspondent pas !")
+     * @Assert\EqualTo( propertyPath = "confirm_password", message = "Les mots de passes ne correspondent pas !",
+     *                                                     groups={"registration"}
+     * )
      * @Assert\NotBlank(
-     *      message = "Veuillez saisir votre mot de passe ! "
+     *      message = "Veuillez saisir votre mot de passe ! ",
+     *      groups={"registration"}
      * )
      * 
      */
     private $password;
     /**
      * cette prop receptionne une valeur mais pas stocké donc pas d'annontation ORM
-     * @Assert\EqualTo(propertyPath = "password", message = "Les mots de passes ne correspondent pas !")
-     * @Assert\NotBlank(
-     *      message = "Veuillez saisir la confirmation de votre mot de passe! "
+     * @Assert\EqualTo(propertyPath = "password", message = "Les mots de passes ne correspondent pas !",
+     *                                             groups={"registration"}
      * )
+     * @Assert\NotBlank(
+     *      message = "Veuillez saisir la confirmation de votre mot de passe! ",
+     *      groups={"registration"}
+     * )
+     * 
      */
     public $confirm_password;
 

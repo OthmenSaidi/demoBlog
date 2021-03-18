@@ -28,6 +28,7 @@ class CategorieFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Categorie::class,
+            'validation_groups' => ['categorie']
         ]);
     }
 }

@@ -11,7 +11,7 @@
 			{% for data in articles %}
 				<div class="col-md-4">
 					<div class="card mb-4 shadow-sm">
-						<img src="{{data.image}}" alt="">
+						<img src="{{ asset('uploads/images/' ~ data.image) }}" alt="">
 						<div class="card-body">
 							<h4 class="text-center">{{data.title}}</h4>
 							<p class="card-text">{{data.content|striptags|slice(0,250)}}</p>
@@ -23,8 +23,9 @@
 								{# La bdd renvoi un objet issue de la classe DateTime, on ne peut la convertir en une chaine de caractère #}
 								{# On utilise donc un filtre Twig : date() #}
 								{#  Nous avons une relation entre la table Article et la table Category
-								                                    Grace aux relations bi-directionnelle, en selectionnant dans la table Article, nous avons automatiquement accès à toute les correspondance dans les autres tables
-								                                    Ici si nous selectionnons les articles, nous avons automatiquement accès à la catégorie associée à l'article ainsi que tout les commentaires liés à l'article #}<small class="text-muted p-2"> Posté le
+																								                                    Grace aux relations bi-directionnelle, en selectionnant dans la table Article, nous avons automatiquement accès à toute les correspondance dans les autres tables
+																								                                    Ici si nous selectionnons les articles, nous avons automatiquement accès à la catégorie associée à l'article ainsi que tout les commentaires liés à l'article #}
+									<small class="text-muted p-2"> Posté le
 									{{data.createdAt|date("m/d/Y")}}
 									à
 									{{data.createdAt|date("H:i:s")}}
