@@ -24,7 +24,8 @@ class Categorie
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(
-     *      message = "Merci de saisir la description de la catégorie"
+     *      message = "Merci de saisir la description de la catégorie",
+     *      groups={"categorie"}
      * )
      */
     private $description;

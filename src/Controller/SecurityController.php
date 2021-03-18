@@ -24,8 +24,13 @@ class SecurityController extends AbstractController
         $user = new User;
         // On execute la méthode createForm() du SecurityController afin de créer un formulaire par rapport à la classe RegistrationFormType déstiné à remplir les setter de l'objet entité $user
 
-        $formRegistration = $this->createForm(RegistrationFormType::class, $user);
+        $formRegistration = $this->createForm(RegistrationFormType::class, $user, [
+            'validation_groups' => ['registration']
 
+
+        ]);
+        // nous definisionns un groupe de validation de contrainte afin qu'il ne soit pas
+        // pris en compte uniquement lors de l'inscirption et non lors de la modif
         // handleRequest() : méthode Symfony qui permet à la validation du formulaire, de remplir l'objet entity $user et d'envoyer les données du formulaire dans les bons setter et propriétés de l'entité $user
 
         $formRegistration->handleRequest($request);
@@ -35,7 +40,8 @@ class SecurityController extends AbstractController
 
             $hash = $encoder->encodePassword($user, $user->getPassword());
 
-            $user->setPAssword($hash);
+            $user->setPassword($hash);
+            $user->setRoles(["ROLE_USER"]);
             $manager->persist($user);
             $manager->flush();
             //dump($hash);

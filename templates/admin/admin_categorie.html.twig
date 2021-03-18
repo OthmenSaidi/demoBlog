@@ -7,8 +7,10 @@
 {% block body %}
 	<h1 class="display-4 text-center my-5 ">Gestion des catégories
 	</h1>
-	<a href="{{path('admin_new_categorie')}}" class="col-md-2 mx-auto btn btn-primary">
-		Nouvelle catégorie</a>
+	<p class="text-center">
+		<a href="{{path('admin_new_categorie')}}" class="col-md-2 mx-auto btn btn-primary">
+			Nouvelle catégorie</a>
+	</p>
 
 	{% for label, messages in app.flashes(['danger','success']) %}
 		{% for message in messages %}
@@ -33,6 +35,11 @@
 				<td>{{categorie.description}}</td>
 				<td>{{categorie.title}}</td>
 				<td>{{categorie.articles|length}}</td>
+				<td>
+					<a href="{{path('admin_edit_categorie', {'id': categorie.id})}}" class="btn btn-info">
+						<i class="fas fa-edit"></i>
+					</a>
+				</td>
 				<td>
 					<a href="{{path('admin_remove_categorie', {'id': categorie.id})}}" class="btn btn-danger" onclick="return(confirm('voulez-vous vraiment supprimer cette catégorie ?'))">
 						<i class="fas fa-trash-alt"></i>
